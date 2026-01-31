@@ -1,0 +1,808 @@
+{
+  "name": "Email outreach to Brand from Excel",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d7466a00-1fba-412d-af63-542d9527f968",
+      "name": "🕘 Start Trigger",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        -784,
+        816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write the email body for a brand collaboration enquiry using the following variables.\n\nInfluencer details:\nName: {{ $('⚙️ techie.in.style configuration').item.json.Name }}\nInstagram Handle: {{ $('⚙️ techie.in.style configuration').item.json.InstaHandle }}\nInstagram Bio: {{ $('⚙️ techie.in.style configuration').item.json.InstaBio }}\n\nBrand details:\nBrand Name: {{ $json.Brand_Name }}\nBrand Type: {{ $json.Brand_Type }}\nPrice Range: {{ $json.Price_Range }}\nGeographic Base: {{ $json.Geographic_Base }}\nWebsite: {{ $json.Website }}\nProduct Category: {{ $json.Product_Category }}\nCollaboration Types: {{ $json.Collaboration_Types }}\n\nPitch requirements:\n- Use first person.\n- Include ONE specific content concept tailored to {{ $json.Product_Category }} (examples: “office-to-evening GRWM”, “quick routine Reel”, “shade pairing with outfits”, “before/after styling + product close-ups”).\n- Mention how my “elevated basics + petite styling + corporate lifestyle” audience naturally intersects with the category (avoid claiming brand attributes not given).\n\nMust include:\n- My Reel reach is higher than my follower count\n- 80–90% of my audience is female\n- All followers are genuine and organic\n- I am open to {{ $json.Collaboration_Types }}\n\nOutput rules:\n- Return EXACTLY 4 <p> blocks (HTML only)\n- First <p> must be exactly: Hi {{ $json.Brand_Name }} Team,\n- Do NOT include \"\\n\" or backslashes\n- 80–120 words total\n- No subject line, no signature, no sign-off\n",
+        "options": {
+          "systemMessage": "You are an expert influencer marketing copywriter.\n\nGenerate a professional, concise, minimalistic brand collaboration outreach email body using HTML only.\n\nSTRICT REQUIREMENTS\n- Output MUST be valid HTML only.\n- Output MUST contain just the body as the output and no other acknowledgement-related texts.\n- Output MUST contain EXACTLY 4 <p> blocks and nothing else.\n- Do NOT include literal \"\\n\" or backslashes anywhere in the output.\n- Do NOT include a subject line.\n- Do NOT include any email signature or sign-off (e.g., Best, Regards, Thanks).\n- Length must be 80–120 words.\n\nVOICE (MANDATORY)\n- Write strictly in FIRST PERSON (I / my / me). Never use third person.\n\nSTRUCTURE\n1) <p> must be EXACTLY: Hi {{ $json.Brand_Name }} Team,</p>\n2) <p> One-line intro: include influencer name + Instagram handle in <strong>, and what I create.</p>\n3) <p> PITCH (must be convincing): include\n   - 2 proof points (reach beyond follower count + 80–90% female + organic),\n   - clear alignment with {{ $json.Brand_Name }} and {{ $json.Product_Category }},\n   - AND 1 specific, category-relevant content concept (e.g., GRWM, office-to-evening transition, routine/review, product review, natural products for skin, workout, fashion tips) by going through the brand and how I can use it in my daily lifestyle described in 8–16 words.\n   Avoid generic phrases like “aligns perfectly” without giving a reason.\n   Do NOT claim brand features unless provided in inputs; keep it category-based and audience-based.</p>\n4) <p> CTA: propose a simple next step + ask ONE specific question.</p>\n\nFORMATTING (HTML TAGS ONLY)\n- Wrap influencer name and Instagram handle together in <strong>.\n- Use <em> for {{ $json.Brand_Name }} on FIRST mention only (exactly once).\n- Use <strong> for at most TWO proof points (max).\n- No emojis, no bullets, no extra line breaks outside <p> tags.\n\nCONTENT MUST INCLUDE\n- Fashion-focused Instagram Reels.\n- Reel reach exceeds follower count.\n- 80–90% audience is female.\n- Followers are genuine and organic.\n- State openness to th\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1008,
+        816
+      ],
+      "id": "f1d55ce8-95a2-4307-b33d-d22b81486e16",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "Name",
+              "stringValue": "Nikita Gyanchandani"
+            },
+            {
+              "name": "InstaHandle",
+              "stringValue": "@techie.in.style"
+            },
+            {
+              "name": "InstaLink",
+              "stringValue": "https://www.instagram.com/techie.in.style/"
+            },
+            {
+              "name": "InstaBio",
+              "stringValue": "Corporate girlie balancing her 9 to 5 and a life Petite style inspo | Elevated basic fits | lifestyle"
+            },
+            {
+              "name": "Email",
+              "stringValue": "nikitagyanchandani0@gmail.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b57fe4d1-8bca-449e-8095-6a85644623d2",
+      "name": "⚙️ techie.in.style configuration",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        112,
+        816
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Brand Collaboration Inquiry | Nikita Gyanchandani (Instagram)",
+        "message": "={{ $json.output.replace(/\\n/g, '<br>') }}<br><br>Best,<br>Nikita Gyanchandani<br>@techie.in.style<br><a href=\"https://www.instagram.com/techie.in.style\">https://www.instagram.com/techie.in.style</a>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ Object.keys($binary).join(',') }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2697c963-b13c-48e7-b0e8-36aea7a14ba3",
+      "name": "📧 Send Email to Brands",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1584,
+        816
+      ],
+      "typeVersion": 2,
+      "webhookId": "a83981f2-0fcc-454e-a09f-7805885220d8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "z1V8NWwwXQkUOdTf",
+          "name": "Nikita Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-url",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              },
+              "leftValue": "={{ $json.Job_URL }}",
+              "rightValue": ""
+            },
+            {
+              "id": "6478bb1f-670f-449f-8f9e-1fa4b5a067fb",
+              "leftValue": "={{ $json.Email_Status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "c4c165c7-7dc5-47fd-af90-d6e81dc7748c",
+      "name": "🎯 Filter Pending Brands",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        560,
+        816
+      ],
+      "typeVersion": 2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        816
+      ],
+      "id": "177e0caf-17c3-4884-92f7-707e7df86a05",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "profileinsights",
+        "limit": 3,
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        816
+      ],
+      "id": "485a4fec-0a58-4b25-8213-7a73fc1e7c2c",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "PxrTk0v7MhJ4szu4",
+          "name": "Nikita Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -336,
+        816
+      ],
+      "id": "7dad9f0f-efd9-4404-bfd4-c26880e9aafb",
+      "name": "Download all images",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "PxrTk0v7MhJ4szu4",
+          "name": "Nikita Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk",
+          "mode": "list",
+          "cachedResultName": "Small-to-MidSize",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1837859861,
+          "mode": "list",
+          "cachedResultName": "influencer_brand_collaboration_",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit#gid=1837859861"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email_Status": "=Sent",
+            "Brand_Name": "={{ $('Get row(s) in sheet').item.json.Brand_Name }}"
+          },
+          "matchingColumns": [
+            "Brand_Name"
+          ],
+          "schema": [
+            {
+              "id": "Brand_Name",
+              "displayName": "Brand_Name",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram_Handle",
+              "displayName": "Instagram_Handle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Instagram_Link",
+              "displayName": "Instagram_Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Follower_Count",
+              "displayName": "Follower_Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Product_Category",
+              "displayName": "Product_Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Brand_Type",
+              "displayName": "Brand_Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Price_Range",
+              "displayName": "Price_Range",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Geographic_Base",
+              "displayName": "Geographic_Base",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Collaboration_Types",
+              "displayName": "Collaboration_Types",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Verification_Status",
+              "displayName": "Verification_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email_Status",
+              "displayName": "Email_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "47a62953-e52e-4cc6-8a2f-56425fd362ee",
+      "name": "📝 Update Email Sent Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1808,
+        816
+      ],
+      "typeVersion": 4,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uiSTVCIUhmr9Z4xq",
+          "name": "Nikita Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from Download all images node\nconst downloadNodeItems = $('Download all images').all();\n\n// Collect all binary data from all downloaded files\nconst binaryData = {};\nfor (let i = 0; i < downloadNodeItems.length; i++) {\n  const item = downloadNodeItems[i];\n  if (item.binary) {\n    const binaryKeys = Object.keys(item.binary);\n    binaryKeys.forEach(key => {\n      const newKey = i === 0 ? key : `${key}_${i}`;\n      binaryData[newKey] = item.binary[key];\n    });\n  }\n}\n\n// Get ALL items from AI Agent and Filter node\nconst aiItems = $input.all();\nconst filterItems = $('🎯 Filter Pending Brands').all();\n\n// Process ALL items and return them all\nconst results = [];\nfor (let i = 0; i < aiItems.length; i++) {\n  const aiItem = aiItems[i];\n  const originalBrandData = filterItems[i]?.json || {};\n  \n  results.push({\n    json: {\n      ...originalBrandData,\n      output: aiItem.json.output || aiItem.json.text || ''\n    },\n    binary: Object.keys(binaryData).length > 0 ? binaryData : undefined\n  });\n}\n\nreturn results;"
+      },
+      "id": "cdfc3cd8-28ea-42c2-9d9f-d5f2c5dfdf86",
+      "name": "🔗 Preserve Binary Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk",
+          "mode": "list",
+          "cachedResultName": "Small-to-MidSize",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1837859861,
+          "mode": "list",
+          "cachedResultName": "influencer_brand_collaboration_",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit#gid=1837859861"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        816
+      ],
+      "id": "ad7875e6-2305-480c-96e2-31d133cf257c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uiSTVCIUhmr9Z4xq",
+          "name": "Nikita Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        1040
+      ],
+      "id": "4aa2d04f-0e73-4c11-872f-336b2d8c53a7",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "KY2q6LaXRxRHfwe9",
+          "name": "Ollama account (local)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "16db9637-ddae-4ddc-8328-06190c8034d1",
+      "name": "🕘 Start Trigger1",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        -784,
+        1152
+      ],
+      "typeVersion": 1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 200,
+        "filters": {
+          "includeSpamTrash": true,
+          "q": "=Address not found",
+          "readStatus": "unread",
+          "receivedAfter": "2026-01-07T00:00:00"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        1152
+      ],
+      "id": "ca6d3399-d977-4d20-beae-0bd6d1d74a1a",
+      "name": "Get many messages",
+      "webhookId": "d7a317b2-3a8b-4c3f-b866-88433980e4e9",
+      "alwaysOutputData": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "z1V8NWwwXQkUOdTf",
+          "name": "Nikita Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "Name",
+              "stringValue": "Nikita Gyanchandani"
+            },
+            {
+              "name": "InstaHandle",
+              "stringValue": "@techie.in.style"
+            },
+            {
+              "name": "InstaLink",
+              "stringValue": "https://www.instagram.com/techie.in.style/"
+            },
+            {
+              "name": "InstaBio",
+              "stringValue": "Corporate girlie balancing her 9 to 5 and a life Petite style inspo | Elevated basic fits | lifestyle"
+            },
+            {
+              "name": "Email",
+              "stringValue": "nikitagyanchandani0@gmail.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c7d2a963-f4db-45b5-849b-612b3a686f53",
+      "name": "⚙️ techie.in.style configuration1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -560,
+        1152
+      ],
+      "typeVersion": 3,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk",
+          "mode": "list",
+          "cachedResultName": "Small-to-MidSize",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1837859861,
+          "mode": "list",
+          "cachedResultName": "influencer_brand_collaboration_",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GAdMlkn5YW69spR1V-rOtLcE_RcDbuX6sCypDd9cYjk/edit#gid=1837859861"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -336,
+        1152
+      ],
+      "id": "6989f1e8-2760-4a46-aa38-3712606af551",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uiSTVCIUhmr9Z4xq",
+          "name": "Nikita Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Mark the unsent emails as Failed"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        1344
+      ],
+      "id": "87ee5095-d835-4733-ba07-42ee7e9b4f53",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0f2d0a5a-7059-49cb-a673-777f2bad2fd3",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        784,
+        816
+      ],
+      "id": "152066fd-fb2c-4da3-8fb2-ee2c8873e0a8",
+      "name": "Filter Brands with Email address"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "🕘 Start Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "🔗 Preserve Binary Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ techie.in.style configuration": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📧 Send Email to Brands": {
+      "main": [
+        [
+          {
+            "node": "📝 Update Email Sent Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 Filter Pending Brands": {
+      "main": [
+        [
+          {
+            "node": "Filter Brands with Email address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "⚙️ techie.in.style configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Download all images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download all images": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Preserve Binary Data": {
+      "main": [
+        [
+          {
+            "node": "📧 Send Email to Brands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "🎯 Filter Pending Brands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🕘 Start Trigger1": {
+      "main": [
+        [
+          {
+            "node": "⚙️ techie.in.style configuration1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ techie.in.style configuration1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Brands with Email address": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6a70685b-7057-4a25-b777-9eb5d8ece178",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0f9e71192615a9fa68c29ac775e1e6bd76f74b1d8407165cd40109fd52553f1d"
+  },
+  "id": "SMYUsKZAQGSqz8rS",
+  "tags": [
+    {
+      "updatedAt": "2026-01-04T13:56:14.350Z",
+      "createdAt": "2026-01-04T13:56:14.350Z",
+      "id": "EKKUXOqnyg6oCjIl",
+      "name": "techie.in.style"
+    }
+  ]
+}
